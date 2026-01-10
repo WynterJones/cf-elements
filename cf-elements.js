@@ -100,6 +100,116 @@
   })();
 
   // ==========================================================================
+  // GOOGLE FONTS - Auto-load fonts from font attributes
+  // ==========================================================================
+
+  // System fonts that don't need to be loaded from Google
+  const SYSTEM_FONTS = new Set([
+    'sans-serif', 'serif', 'monospace', 'cursive', 'fantasy', 'system-ui',
+    'ui-sans-serif', 'ui-serif', 'ui-monospace', 'ui-rounded',
+    'arial', 'helvetica', 'times new roman', 'times', 'courier new', 'courier',
+    'verdana', 'georgia', 'palatino', 'garamond', 'bookman', 'tahoma',
+    'trebuchet ms', 'arial black', 'impact', 'comic sans ms', 'inherit'
+  ]);
+
+  // Track which fonts have been loaded to avoid duplicates
+  const loadedFonts = new Set();
+
+  /**
+   * Extract Google Font names from the document
+   * Scans font attributes on cf-* elements and styleguide data
+   */
+  function extractFontsFromDocument() {
+    const fonts = new Set();
+
+    // 1. Extract from font attributes on elements
+    document.querySelectorAll('[font]').forEach(el => {
+      const font = el.getAttribute('font');
+      if (font) {
+        // Clean and add font name
+        const cleanFont = font.replace(/["']/g, '').split(',')[0].trim();
+        if (cleanFont && !SYSTEM_FONTS.has(cleanFont.toLowerCase())) {
+          fonts.add(cleanFont);
+        }
+      }
+    });
+
+    // 2. Extract from styleguide data if present
+    const styleguideEl = document.getElementById('cf-styleguide-data');
+    if (styleguideEl) {
+      try {
+        const data = JSON.parse(styleguideEl.textContent);
+        if (data.typography) {
+          const { headlineFont, subheadlineFont, contentFont } = data.typography;
+          [headlineFont, subheadlineFont, contentFont].forEach(font => {
+            if (font && !SYSTEM_FONTS.has(font.toLowerCase())) {
+              fonts.add(font);
+            }
+          });
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
+    }
+
+    // 3. Extract from inline font-family styles in cf-* elements
+    document.querySelectorAll('cf-headline, cf-subheadline, cf-paragraph, cf-button').forEach(el => {
+      const style = el.getAttribute('style') || '';
+      const match = style.match(/font-family:\s*["']?([^"';,]+)/i);
+      if (match) {
+        const font = match[1].trim();
+        if (font && !SYSTEM_FONTS.has(font.toLowerCase())) {
+          fonts.add(font);
+        }
+      }
+    });
+
+    return fonts;
+  }
+
+  /**
+   * Inject Google Fonts stylesheet into document head
+   */
+  function injectGoogleFonts(fonts) {
+    if (!fonts || fonts.size === 0) return;
+
+    // Filter out already loaded fonts
+    const newFonts = Array.from(fonts).filter(f => !loadedFonts.has(f));
+    if (newFonts.length === 0) return;
+
+    // Mark as loaded
+    newFonts.forEach(f => loadedFonts.add(f));
+
+    // Build Google Fonts URL
+    const fontParams = newFonts
+      .map(font => font.replace(/ /g, '+'))
+      .join('&family=');
+
+    const url = `https://fonts.googleapis.com/css2?family=${fontParams}:wght@300;400;500;600;700;800;900&display=swap`;
+
+    // Check if already loaded
+    if (document.querySelector(`link[href^="https://fonts.googleapis.com"][href*="${newFonts[0].replace(/ /g, '+')}"]`)) {
+      return;
+    }
+
+    // Inject link tag
+    const link = document.createElement('link');
+    link.id = 'cf-google-fonts';
+    link.rel = 'stylesheet';
+    link.href = url;
+    document.head.appendChild(link);
+  }
+
+  /**
+   * Auto-load Google Fonts from document
+   * Called before element rendering
+   */
+  function loadGoogleFonts() {
+    const fonts = extractFontsFromDocument();
+    injectGoogleFonts(fonts);
+  }
+
+  // ==========================================================================
   // CONSTANTS & MAPPINGS
   // ==========================================================================
 
@@ -4588,6 +4698,7 @@
   // Auto-initialize when DOM is ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => {
+      loadGoogleFonts();  // Load fonts before rendering
       styleguideManager.init();
       brandAssetsManager.init();
       initFunnelWind();
@@ -4600,6 +4711,7 @@
   } else {
     // DOM already ready, use requestAnimationFrame to ensure all elements are parsed
     requestAnimationFrame(() => {
+      loadGoogleFonts();  // Load fonts before rendering
       styleguideManager.init();
       brandAssetsManager.init();
       initFunnelWind();
@@ -4616,12 +4728,14 @@
     init: initFunnelWind,
     initAnimations: initAnimations,
     loadAnimateCSS: loadAnimateCSS,
+    loadGoogleFonts: loadGoogleFonts,
     initVideoBackgrounds: initVideoBackgrounds,
     elements: elements,
     StyleguideManager: styleguideManager,
     BrandAssetsManager: brandAssetsManager,
     initStyleguide: (data) => {
       styleguideManager.init(data);
+      loadGoogleFonts();  // Load fonts from styleguide
       initFunnelWind();
     },
     initBrandAssets: (data) => {
