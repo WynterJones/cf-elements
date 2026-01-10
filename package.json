@@ -1,6 +1,6 @@
 {
   "name": "cf-elements",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Zero-dependency Web Components library that generates ClickFunnels compatible HTML with inline styles",
   "main": "cf-elements.js",
   "browser": "cf-elements.js",
@@ -25,7 +25,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/barnumpt/cf-elements.git"
+    "url": "git+https://github.com/barnumpt/cf-elements.git"
   },
   "homepage": "https://barnumpt.app/docs/funnelwind",
   "bugs": {
