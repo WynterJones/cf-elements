@@ -1,7 +1,7 @@
 {
   "name": "cf-elements",
-  "version": "1.0.1",
-  "description": "Zero-dependency Web Components library that generates ClickFunnels compatible HTML with inline styles",
+  "version": "1.0.2",
+  "description": "Zero-dependency markup library that generates ClickFunnels compatible HTML with inline styles",
   "main": "cf-elements.js",
   "browser": "cf-elements.js",
   "unpkg": "cf-elements.js",
@@ -14,12 +14,9 @@
     "test": "echo \"No tests yet\""
   },
   "keywords": [
-    "web-components",
     "clickfunnels",
     "funnelwind",
-    "landing-pages",
-    "no-code",
-    "inline-styles"
+    "landing-pages"
   ],
   "author": "BarnumPT",
   "license": "MIT",

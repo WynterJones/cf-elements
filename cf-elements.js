@@ -71,6 +71,35 @@
   })();
 
   // ==========================================================================
+  // BACKGROUND STYLES - Inject CSS for background image classes
+  // ==========================================================================
+
+  // Inject background styles immediately
+  (function injectBgStyles() {
+    const style = document.createElement('style');
+    style.id = 'cf-bg-styles';
+    style.textContent = `
+      /* Background style classes - matches ClickFunnels options */
+      .bgCover { background-size: cover !important; background-repeat: no-repeat !important; }
+      .bgCoverCenter { background-size: cover !important; background-position: center center !important; background-repeat: no-repeat !important; }
+      .bgCoverV2 { background-attachment: fixed !important; background-size: cover !important; background-position: center center !important; background-repeat: no-repeat !important; }
+      .bgW100 { background-size: 100% auto !important; background-repeat: no-repeat !important; }
+      .bgW100H100 { background-size: 100% 100% !important; background-repeat: no-repeat !important; }
+      .bgNoRepeat { background-repeat: no-repeat !important; }
+      .bgRepeat { background-repeat: repeat !important; }
+      .bgRepeatX { background-repeat: repeat-x !important; }
+      .bgRepeatY { background-repeat: repeat-y !important; }
+    `;
+    if (document.head) {
+      document.head.appendChild(style);
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        document.head.appendChild(style);
+      });
+    }
+  })();
+
+  // ==========================================================================
   // CONSTANTS & MAPPINGS
   // ==========================================================================
 

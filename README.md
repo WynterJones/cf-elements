@@ -1,6 +1,8 @@
 # cf-elements
 
-Zero-dependency Web Components library that generates ClickFunnels compatible HTML with inline styles.
+Zero-dependency markup library that renders ClickFunnels-style HTML with inline styles.
+
+It is intended use is for building "ClickFunnels mockups" in LLMs like Claude/ChatGPT/etc, which then can be converted to ClickFunnels ready JSON via the `cf-pagetree-parser` package.
 
 ## Installation
 
