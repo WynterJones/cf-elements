@@ -1,6 +1,6 @@
 {
   "name": "cf-elements",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Zero-dependency markup library that generates ClickFunnels compatible HTML with inline styles",
   "main": "cf-elements.js",
   "browser": "cf-elements.js",
