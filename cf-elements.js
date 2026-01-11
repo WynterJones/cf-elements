@@ -1088,8 +1088,9 @@
       };
 
       // Apply font-family for inheritance by child elements
+      // Use single quotes to avoid breaking the HTML style attribute
       if (font) {
-        styles["font-family"] = `"${font}", sans-serif`;
+        styles["font-family"] = `'${font}', sans-serif`;
       }
 
       if (gradient) {
