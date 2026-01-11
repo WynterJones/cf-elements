@@ -1054,7 +1054,8 @@
    *   bg-style    - Background image style: cover, cover-center (default), parallax, w100, w100h100, no-repeat, repeat, repeat-x, repeat-y
    *   gradient    - CSS gradient
    *   overlay     - Overlay color (rgba)
-   *   text-color  - Default text color (inherited by child elements)
+   *   color       - Default text color (inherited by child elements)
+   *   text-color  - Alias for color
    *   link-color  - Default link color
    *   font        - Default font family (e.g., "Roboto") - inherited by child elements
    *   font-family - Alias for font
@@ -1070,7 +1071,8 @@
       const bgStyle = attr(this, "bg-style");
       const gradient = attr(this, "gradient");
       const overlay = attr(this, "overlay");
-      const textColor = attr(this, "text-color", "#334155");
+      // Support both "color" (simple) and "text-color" (explicit) for page text color
+      const textColor = attr(this, "color") || attr(this, "text-color", "#334155");
       const linkColor = attr(this, "link-color", "#3b82f6");
       // Support both "font" (simple) and "font-family" (explicit) attributes
       const font = attr(this, "font") || attr(this, "font-family");
@@ -1707,24 +1709,24 @@
       }
 
       // Build ID attribute for scroll-to and custom CSS targeting
-      // ID goes on col-inner so custom CSS targets the styled element, not the structural wrapper
+      // ID goes on ColContainer so pagetree parser captures it correctly
       const idAttr = elementId ? ` id="${elementId}"` : "";
       const showAttr = show ? ` data-show="${show}"` : "";
 
       // Only render col-inner if there's styling, otherwise just wrap content
       let innerHtml;
       if (hasColInnerStyling) {
-        innerHtml = `<div${idAttr} ${dataAttrs} style="${buildStyle(
+        innerHtml = `<div ${dataAttrs} style="${buildStyle(
           innerStyles
         )}">${overlayHtml}${contentHtml}</div>`;
       } else {
-        innerHtml = `<div${idAttr} class="col-inner" style="${buildStyle(
+        innerHtml = `<div class="col-inner" style="${buildStyle(
           innerStyles
         )}">${contentHtml}</div>`;
       }
 
       this.outerHTML = `
-        <div data-type="ColContainer/V1" data-span="${span}" data-col-direction="${align}"${showAttr} style="${buildStyle(
+        <div${idAttr} data-type="ColContainer/V1" data-span="${span}" data-col-direction="${align}"${showAttr} style="${buildStyle(
         colStyles
       )}">
           ${innerHtml}
