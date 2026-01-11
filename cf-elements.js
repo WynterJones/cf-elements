@@ -1054,9 +1054,10 @@
    *   bg-style    - Background image style: cover, cover-center (default), parallax, w100, w100h100, no-repeat, repeat, repeat-x, repeat-y
    *   gradient    - CSS gradient
    *   overlay     - Overlay color (rgba)
-   *   text-color  - Default text color
+   *   text-color  - Default text color (inherited by child elements)
    *   link-color  - Default link color
-   *   font-family - Default font family (e.g., '"Roboto", sans-serif')
+   *   font        - Default font family (e.g., "Roboto") - inherited by child elements
+   *   font-family - Alias for font
    *   font-weight - Default font weight
    *   header-code - Custom header HTML/scripts
    *   footer-code - Custom footer HTML/scripts
@@ -1071,7 +1072,8 @@
       const overlay = attr(this, "overlay");
       const textColor = attr(this, "text-color", "#334155");
       const linkColor = attr(this, "link-color", "#3b82f6");
-      const fontFamily = attr(this, "font-family");
+      // Support both "font" (simple) and "font-family" (explicit) attributes
+      const font = attr(this, "font") || attr(this, "font-family");
       const fontWeight = attr(this, "font-weight");
       const headerCode = attr(this, "header-code");
       const footerCode = attr(this, "footer-code");
@@ -1081,7 +1083,14 @@
         width: "100%",
         "min-height": "100vh",
         position: "relative",
+        // Apply text color and font for CSS inheritance
+        color: textColor,
       };
+
+      // Apply font-family for inheritance by child elements
+      if (font) {
+        styles["font-family"] = `"${font}", sans-serif`;
+      }
 
       if (gradient) {
         styles["background"] = gradient;
@@ -1108,7 +1117,7 @@
 
       // Build optional data attributes for settings
       let optionalAttrs = "";
-      if (fontFamily) optionalAttrs += ` data-font-family="${fontFamily}"`;
+      if (font) optionalAttrs += ` data-font="${font}"`;
       if (fontWeight) optionalAttrs += ` data-font-weight="${fontWeight}"`;
       if (headerCode)
         optionalAttrs += ` data-header-code="${encodeURIComponent(
@@ -2168,6 +2177,7 @@
    */
   class CFHeadline extends CFElement {
     render() {
+      const elementId = attr(this, "element-id");
       const size = attr(this, "size", "48px");
       const weight = attr(this, "weight", "bold");
       const font = attr(this, "font");
@@ -2213,6 +2223,7 @@
       // Build data attributes for round-trip conversion
       // Store original size (preset or px) for reliable roundtrip
       let dataAttrs = 'data-type="Headline/V1"';
+      if (elementId) dataAttrs += ` data-element-id="${elementId}"`;
       dataAttrs += ` data-size="${size}"`;
       dataAttrs += ` data-weight="${weight}"`;
       if (hasExplicitColor && color) {
@@ -2228,6 +2239,9 @@
       if (mt !== "0") dataAttrs += ` data-mt="${mt}"`;
       if (icon) dataAttrs += ` data-icon="${icon}"`;
       if (icon && iconAlign !== "left") dataAttrs += ` data-icon-align="${iconAlign}"`;
+
+      // Build ID attribute for scroll-to and show-hide targeting
+      const idAttr = elementId ? ` id="${elementId}"` : "";
 
       // Build icon HTML if present
       let iconHtml = "";
@@ -2246,7 +2260,7 @@
       dataAttrs += animationAttrs;
 
       this.outerHTML = `
-        <div ${dataAttrs} style="${buildStyle(wrapperStyles)}">
+        <div${idAttr} ${dataAttrs} style="${buildStyle(wrapperStyles)}">
           <${tag} style="${buildStyle(textStyles)}">${textWithIcon}</${tag}>
         </div>
       `;
@@ -2259,6 +2273,7 @@
    */
   class CFSubheadline extends CFElement {
     render() {
+      const elementId = attr(this, "element-id");
       const size = attr(this, "size", "24px");
       const weight = attr(this, "weight", "normal");
       const font = attr(this, "font");
@@ -2302,6 +2317,7 @@
       // Build data attributes for round-trip conversion
       // Store original size (preset or px) for reliable roundtrip
       let dataAttrs = 'data-type="SubHeadline/V1"';
+      if (elementId) dataAttrs += ` data-element-id="${elementId}"`;
       dataAttrs += ` data-size="${size}"`;
       dataAttrs += ` data-weight="${weight}"`;
       if (hasExplicitColor && color) {
@@ -2317,6 +2333,9 @@
       if (mt !== "0") dataAttrs += ` data-mt="${mt}"`;
       if (icon) dataAttrs += ` data-icon="${icon}"`;
       if (icon && iconAlign !== "left") dataAttrs += ` data-icon-align="${iconAlign}"`;
+
+      // Build ID attribute for scroll-to and show-hide targeting
+      const idAttr = elementId ? ` id="${elementId}"` : "";
 
       // Build icon HTML if present
       let iconHtml = "";
@@ -2335,7 +2354,7 @@
       dataAttrs += animationAttrs;
 
       this.outerHTML = `
-        <div ${dataAttrs} style="${buildStyle(wrapperStyles)}">
+        <div${idAttr} ${dataAttrs} style="${buildStyle(wrapperStyles)}">
           <${tag} style="${buildStyle(textStyles)}">${textWithIcon}</${tag}>
         </div>
       `;
@@ -2348,6 +2367,7 @@
    */
   class CFParagraph extends CFElement {
     render() {
+      const elementId = attr(this, "element-id");
       const size = attr(this, "size", "16px");
       const weight = attr(this, "weight", "normal");
       const font = attr(this, "font");
@@ -2399,6 +2419,7 @@
       // Build data attributes for round-trip conversion
       // Store original size (preset or px) for reliable roundtrip
       let dataAttrs = 'data-type="Paragraph/V1"';
+      if (elementId) dataAttrs += ` data-element-id="${elementId}"`;
       dataAttrs += ` data-size="${size}"`;
       dataAttrs += ` data-weight="${weight}"`;
       if (hasExplicitColor && color) {
@@ -2417,6 +2438,9 @@
       if (icon) dataAttrs += ` data-icon="${icon}"`;
       if (icon && iconAlign !== "left") dataAttrs += ` data-icon-align="${iconAlign}"`;
 
+      // Build ID attribute for scroll-to and show-hide targeting
+      const idAttr = elementId ? ` id="${elementId}"` : "";
+
       // Build icon HTML if present
       let iconHtml = "";
       if (icon) {
@@ -2434,7 +2458,7 @@
       dataAttrs += animationAttrs;
 
       this.outerHTML = `
-        <div ${dataAttrs} style="${buildStyle(wrapperStyles)}">
+        <div${idAttr} ${dataAttrs} style="${buildStyle(wrapperStyles)}">
           <p style="${buildStyle(textStyles)}">${textWithIcon}</p>
         </div>
       `;
